@@ -29,7 +29,7 @@ This gives a red background if your terminal supports OCS:
 
 2. To add the tool to your `PATH` put the following line in your profile (`.bashrc`/`.zshrv`/`.profile`).
 
-        PATH=$HOME/.dynamic-colors:$PATH
+        export PATH=$HOME/.dynamic-colors:$PATH
 
 
 ## Usage
