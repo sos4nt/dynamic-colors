@@ -31,6 +31,9 @@ This gives a red background if your terminal supports OCS:
 
         export PATH="$HOME/.dynamic-colors/bin:$PATH"
 
+3. For Zsh autocompletion add this to your `.zshrc`/`.zshenv`:
+
+        source $HOME/.dynamic-colors/completions/dynamic-colors.zsh
 
 ## Usage
 
@@ -41,6 +44,12 @@ List available color schemes:
 Switch to a color scheme:
 
     dynamic-colors switch solarized-dark
+
+Reload last color scheme:
+
+    dynamic-colors init
+
+Add this line to your profile to always set the last color scheme.
 
 ### Integration
 
