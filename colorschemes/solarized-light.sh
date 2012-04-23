@@ -27,6 +27,7 @@ foreground="$base00"
 cursor="$base01"
 mouse_background="$base2"
 mouse_foreground="$base01"
+highlight="$base2"
 
  color0="$base2"   # black
  color8="$base3"   # brblack
