@@ -1,13 +1,13 @@
 # dynamic-colors
 
-This is a small tool for changing terminal colors 0-15 on the fly.
+This is a small tool for changing your terminal colors on the fly.
 
 I use it to switch my entire [tmux](http://tmux.sourceforge.net/) session between [Solarized](http://ethanschoonover.com/solarized) dark and light modes.
 
 
 ## Pre-requisites
 
-Your terminal must support the appropriate OSC escape sequences. xterm and urxvt (rxvt-unicode) work fine, whereas Terminal.app and iTerm wont recognize these sequences.
+Your terminal must support the appropriate OSC escape sequences. xterm and urxvt (rxvt-unicode) work fine, whereas Terminal.app and iTerm won't recognize these sequences.
 
 Make sure `dynamicColors` is enabled in `.Xdefaults`/`.Xresources`
 
@@ -16,7 +16,7 @@ Make sure `dynamicColors` is enabled in `.Xdefaults`/`.Xresources`
 
 ### Compatibility Check
 
-This gives a red background if your terminal supports OCS:
+This changes your terminal background color to red if your terminal supports OCS:
 
     echo -e "\033]11;#ff0000\007"
 
