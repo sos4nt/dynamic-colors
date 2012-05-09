@@ -7,7 +7,7 @@ I use it to switch my entire [tmux](http://tmux.sourceforge.net/) session betwee
 
 ## Pre-requisites
 
-Your terminal must support OSC escape sequences. Real terminals like xterm and urxvt work fine, whereas terminal emulators like Terminal.app or iTerm fall short.
+Your terminal must support the appropriate OSC escape sequences. xterm and urxvt (rxvt-unicode) work fine, whereas Terminal.app and iTerm wont recognize these sequences.
 
 Make sure `dynamicColors` is enabled in `.Xdefaults`/`.Xresources`
 
