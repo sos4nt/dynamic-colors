@@ -1,12 +1,13 @@
 #!/bin/sh
 set -e
 
-USAGE="Usage: dynamic-colors [help|init|list|switch <colorscheme>]"
+USAGE="Usage: dynamic-colors [help|cycle|init|list|switch <colorscheme>]"
 HELP="\
 dynamic-colors <command>
 
 Basic commands:
   h,help                  print this help message
+  c,ycle                  cycle through color schemes
   e,edit [<colorscheme>]  edit <colorscheme> when given or launch editor
                           in colorschemes directory otherwise
   i,init                  (re)load last color scheme
@@ -132,6 +133,29 @@ audit () {
   fi
 }
 
+cycle() {
+    if [ -f "${DYNAMIC_COLORS_ROOT}/colorscheme" ]; then
+        current=`head -1 "${DYNAMIC_COLORS_ROOT}/colorscheme"`
+        found=false
+        cd "$COLORSCHEMES"
+        for file in *.sh; do
+            if [ $found = true ]; then
+                switch "${file%.sh}"
+                return
+            fi
+            if [ $file = "${current}.sh" ]; then
+                found=true
+            fi
+        done
+    fi
+
+    cd "$COLORSCHEMES"
+    for file in *.sh; do
+        switch "${file%.sh}"
+        break
+    done
+}
+
 list () {
   [ ! -d "$COLORSCHEMES" ] && die "error: colorschemes directory '$COLORSCHEMES' doesn't exist"
   cd "$COLORSCHEMES"
@@ -157,7 +181,7 @@ create () {
     [[ $color == color* ]] && output+=" # ${color_names[${color#color}]}"
   done
   cd "$COLORSCHEMES"
-  echo "$output" >> "$1.sh"
+  echo -e "$output" >> "$1.sh"
   edit "$1"
 }
 
@@ -192,6 +216,8 @@ case "$#" in
   s|switch)
     [ $# -ne 1 ] && usage
     switch "$1" ;;
+  c|cycle)
+    cycle ;;
   *)
     usage ;;
   esac
