@@ -70,3 +70,21 @@ Check if all colors are defined:
 
     dynamic-colors audit my-color-scheme
 
+## Key binding example for urxvt
+Save this to a file named "urxvt-colors":
+
+    sub on_user_command {
+        my ($self, $cmd) = @_;
+        my $output = `dynamic-colors cycle`;
+        $self->cmd_parse($output);
+    }
+
+Add this to ~/.Xdefaults:
+
+    urxvt*perl-ext-common: urxvt-colors
+    urxvt*perl-lib: [directoy of urxvt-colors]
+    urxvt*keysym.F12: perl:urxvt-colors:
+
+Now you can cycle through all color schemes using F12 for example,
+without closing running console applications.
+
