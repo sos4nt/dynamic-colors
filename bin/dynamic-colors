@@ -7,7 +7,7 @@ dynamic-colors <command>
 
 Basic commands:
   h,help                  print this help message
-  c,ycle                  cycle through color schemes
+  c,cycle                  cycle through color schemes
   e,edit [<colorscheme>]  edit <colorscheme> when given or launch editor
                           in colorschemes directory otherwise
   i,init                  (re)load last color scheme
