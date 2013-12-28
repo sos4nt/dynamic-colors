@@ -31,9 +31,10 @@ This changes your terminal background color to red if your terminal supports OCS
 
         export PATH="$HOME/.dynamic-colors/bin:$PATH"
 
-3. For Zsh autocompletion add this to your `.zshrc`/`.zshenv`:
+3. For autocompletion add this to your profile (`.bashrc`/`.zshrc`/`.profile`). Change .zsh to .bash for bash environments.
 
         source $HOME/.dynamic-colors/completions/dynamic-colors.zsh
+
 
 ## Usage
 
