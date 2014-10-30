@@ -99,7 +99,7 @@ Add this to ~/.Xdefaults:
 
     urxvt*perl-ext-common: urxvt-colors
     urxvt*perl-lib: [directoy of urxvt-colors]
-    urxvt*keysym.F12: perl:urxvt-colors:
+    urxvt*keysym.F12: perl:urxvt-colors:cycle
 
 Now you can cycle through all color schemes using F12 for example,
 without closing running console applications.
