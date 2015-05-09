@@ -78,9 +78,9 @@ Save this to a file named "urxvt-colors":
       my ($self, $cmd) = @_;
       my $output = `dynamic-colors cycle`;
 
-		  if ($cmd eq 'urxvt-colors:cycle') {
-        $self->cmd_parse($output);
-		  }
+	if ($cmd eq 'urxvt-colors:cycle') {
+		$self->cmd_parse($output);
+	}
     }
 
 Add this to ~/.Xdefaults:
