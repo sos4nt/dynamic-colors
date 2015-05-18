@@ -7,7 +7,8 @@ dynamic-colors <command>
 
 Basic commands:
   h,help                  print this help message
-  c,cycle                 cycle through color schemes
+  u,cycle                 cycle through color schemes forwards
+  d,cycledown             cycle through color schemes backwards
   e,edit [<colorscheme>]  edit <colorscheme> when given or launch editor
                           in colorschemes directory otherwise
   i,init                  (re)load last color scheme
@@ -156,6 +157,29 @@ cycle() {
     done
 }
 
+cycledown() {
+    if [ -f "${DYNAMIC_COLORS_ROOT}/colorscheme" ]; then
+        current=`head -1 "${DYNAMIC_COLORS_ROOT}/colorscheme"`
+        found=false
+        cd "$COLORSCHEMES"
+        for file in `ls -r *.sh`; do
+            if [ $found = true ]; then
+                switch "${file%.sh}"
+                return
+            fi
+            if [ $file = "${current}.sh" ]; then
+                found=true
+            fi
+        done
+    fi
+
+    cd "$COLORSCHEMES"
+    for file in `ls -r *.sh`; do
+        switch "${file%.sh}"
+        break
+    done
+}
+
 list () {
   [ ! -d "$COLORSCHEMES" ] && die "error: colorschemes directory '$COLORSCHEMES' doesn't exist"
   cd "$COLORSCHEMES"
@@ -216,8 +240,10 @@ case "$#" in
   s|switch)
     [ $# -ne 1 ] && usage
     switch "$1" ;;
-  c|cycle)
+  u|cycle)
     cycle ;;
+  d|cycledown)
+    cycledown ;;
   *)
     usage ;;
   esac
