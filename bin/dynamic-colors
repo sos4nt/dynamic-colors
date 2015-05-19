@@ -109,7 +109,7 @@ load_colorscheme () {
      change_color $group $hex
   done
 
-  notify-send-user -U amk "switched to $1"
+  notify-send-user -U $USER "switched to $1" &>/dev/null
 }
 
 switch () {
