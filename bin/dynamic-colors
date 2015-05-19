@@ -91,19 +91,6 @@ init () {
   [ ! -f "$DYNAMIC_COLORS_THEMES" ] && return
   colorscheme_name=$(load_colorscheme_name)
   load_colorscheme "$colorscheme_name"
-  set_colors
-}
-
-unset_colors () {
-  for color in ${colors[@]}; do
-    unset ${!color}
-  done
-}
-
-set_colors () {
-  for color in ${colors[@]}; do
-    [[ ${!color} ]] && change_color "$color" "${!color}"
-  done
 }
 
 load_colorscheme () {
@@ -129,7 +116,6 @@ load_colorscheme () {
 switch () {
   write_colorscheme_name "$1"
   load_colorscheme "$1"
-  # set_colors
 }
 
 cycle() {
