@@ -133,57 +133,34 @@ switch () {
 }
 
 cycle() {
-  current=`head -1 "${DYNAMIC_COLORS_ROOT}/colorscheme"`
-  found=false
-  count=0
-  allthemes=$(find $DYNAMIC_COLORS_THEMES -type f -printf '%f\n' | sort)
+  if [ $1 = "up" ]; then
+    allthemes=$(find $DYNAMIC_COLORS_THEMES -type f -printf '%f\n' | sort)
+  else
+    allthemes=$(find $DYNAMIC_COLORS_THEMES -type f -printf '%f\n' | sort -r)
+  fi
+
   allthemeslength=`echo "$allthemes" | wc -l`
   allthemeslength=$((allthemeslength - 1))
+  count=0
+  current=`head -1 "${DYNAMIC_COLORS_ROOT}/colorscheme"`
   firsttheme=`printf $allthemes | head -n 1`
+  found=false
   cd "$DYNAMIC_COLORS_THEMES"
 
   for file in $allthemes; do
-    # echo "Currently using $current"
-    # echo "Iterating over $file / $count / $allthemeslength"
     if [ $found = true ]; then
       switch "$file"
       return
     fi
     if [ $file = "${current}" ]; then
       found=true
-      # echo "^ found match"
       if [ $count == $allthemeslength ];then
-        # switch to first one
-        # echo "First theme $firsttheme"
         switch "$firsttheme"
         return
       fi
     fi
     count=$((count + 1))
   done
-}
-
-cycledown() {
-    if [ -f "$DYNAMIC_COLORS_THEMES" ]; then
-        current=`head -1 "$DYNAMIC_COLORS_THEMES"`
-        found=false
-        cd "$DYNAMIC_COLORS_THEMES"
-        for file in `ls -r *`; do
-            if [ $found = true ]; then
-                switch "${file%}"
-                return
-            fi
-            if [ $file = "${current}.sh" ]; then
-                found=true
-            fi
-        done
-    fi
-
-    cd "$DYNAMIC_COLORS_THEMES"
-    for file in `ls -r *.sh`; do
-        switch "${file%}"
-        break
-    done
 }
 
 list () {
@@ -218,10 +195,10 @@ case "$#" in
   s|switch)
     [ $# -ne 1 ] && usage
     switch "$1" ;;
-  u|cycle)
-    cycle ;;
-  d|cycledown)
-    cycledown ;;
+  c|next)
+    cycle "up";;
+  d|previous)
+    cycle "down" ;;
   *)
     usage ;;
   esac
