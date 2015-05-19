@@ -1,16 +1,14 @@
 #!/bin/bash
 set -e
 
-USAGE="Usage: dynamic-colors [help|cycle|init|list|switch <colorscheme>]"
+USAGE="Usage: dynamic-colors [help|next|previous|list|switch <colorscheme>]"
 HELP="\
 dynamic-colors <command>
 
 Basic commands:
   h,help                  print this help message
-  u,cycle                 cycle through color schemes forwards
-  d,cycledown             cycle through color schemes backwards
-  e,edit [<colorscheme>]  edit <colorscheme> when given or launch editor
-                          in colorschemes directory otherwise
+  c,next                  cycle through color schemes forwards
+  p,previous              cycle through color schemes backwards
   i,init                  (re)load last color scheme
   l,list                  list available colorschemes
   s,switch <colorscheme>  change terminal colors to <colorscheme>
@@ -110,7 +108,8 @@ load_colorscheme () {
      fi
      change_color $group $hex
   done
-  # ."$COLORSCHEMES/$1.sh" # source colorscheme file
+
+  notify-send-user -U amk "switched to $1"
 }
 
 switch () {
@@ -119,7 +118,7 @@ switch () {
 }
 
 cycle() {
-  if [ $1 = "up" ]; then
+  if [ $1 = "next" ]; then
     allthemes=$(find $DYNAMIC_COLORS_THEMES -type f -printf '%f\n' | sort)
   else
     allthemes=$(find $DYNAMIC_COLORS_THEMES -type f -printf '%f\n' | sort -r)
@@ -182,9 +181,9 @@ case "$#" in
     [ $# -ne 1 ] && usage
     switch "$1" ;;
   c|next)
-    cycle "up";;
-  d|previous)
-    cycle "down" ;;
+    cycle "next";;
+  p|previous)
+    cycle "previous" ;;
   *)
     usage ;;
   esac
