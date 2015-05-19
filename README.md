@@ -1,9 +1,8 @@
 # dynamic-colors
 
-This is a small tool for changing your terminal colors on the fly.
+This is a small tool for changing your terminal colors on the fly. This fork supports reading Xcolor style files. 
 
-I use it to switch my entire [tmux](http://tmux.sourceforge.net/) session between [Solarized](http://ethanschoonover.com/solarized) dark and light modes.
-
+Most work accomplished by (sos4nt)[https://github.com/sos4nt/dynamic-colors] who did the original version which had a custom theme format.
 
 ## Pre-requisites
 
@@ -31,7 +30,11 @@ This changes your terminal background color to red if your terminal supports OCS
 
         export PATH="$HOME/.dynamic-colors/bin:$PATH"
 
-3. For autocompletion add this to your profile (`.bashrc`/`.zshrc`/`.profile`). Change .zsh to .bash for bash environments.
+3. If you have a directory where you keep your Xcolor themes, define in in your `PATH` too (by default they are read from `~/.dynamic-colors/schemes/`):
+
+        export DYNAMIC_COLORS_THEMES=~/.custom/xcolors/here/
+
+4. For autocompletion add this to your profile (`.bashrc`/`.zshrc`/`.profile`). Change .zsh to .bash for bash environments.
 
         source $HOME/.dynamic-colors/completions/dynamic-colors.zsh
 
@@ -44,7 +47,11 @@ List available color schemes:
 
 Switch to a color scheme:
 
-    dynamic-colors switch solarized-dark
+    dynamic-colors switch visibone
+
+Switch to a next/previous scheme:
+
+    dynamic-colors next/previous
 
 Reload last color scheme:
 
@@ -52,43 +59,34 @@ Reload last color scheme:
 
 Add this line to your profile to always set the last color scheme.
 
-### Integration
+## Notes
 
-I'm using the provided color schemes in conjunction with [dircolors-solarized](https://github.com/seebi/dircolors-solarized) and [vim-colors-solarized](https://github.com/altercation/vim-colors-solarized) for best results. Always use the dark mode and switch schemes with `dynamic-colors switch <colorscheme>`
+This repository comes with just one Xcolor file for testing purposes.
 
+## Notification
 
-## Developing color schemes
-
-Create a new color scheme (will be opened in your default editor):
-
-    dynamic-colors create my-color-scheme
-
-Edit an exising color scheme:
-
-    dynamic-colors edit my-color-scheme
-
-Check if all colors are defined:
-
-    dynamic-colors audit my-color-scheme
+If you have ``notify-send-user`` the script will notify you of the name of the scheme you switched to.
 
 ## Key binding example for urxvt
-Save this to a file named "urxvt-colors":
+Save this to a file named "urxvt-colors" most likely in `~/.urxvt/ext/share/`:
 
     sub on_user_command {
-      my ($self, $cmd) = @_;
-      my $output = `dynamic-colors cycle`;
+        my ($self, $cmd) = @_;
 
-	if ($cmd eq 'urxvt-colors:cycle') {
-		$self->cmd_parse($output);
-	}
+		    if ($cmd eq 'urxvt-colors:next') {
+          $self->cmd_parse(`dynamic-colors next`);
+		    }
+
+		    if ($cmd eq 'urxvt-colors:previous') {
+          $self->cmd_parse(`dynamic-colors previous`);
+		    }
     }
 
 Add this to ~/.Xdefaults:
 
     urxvt*perl-ext-common: urxvt-colors
     urxvt*perl-lib: [directoy of urxvt-colors]
-    urxvt*keysym.F12: perl:urxvt-colors:cycle
+    urxvt.keysym.M-F11: perl:urxvt-colors:next
+    urxvt.keysym.M-F12: perl:urxvt-colors:previous
 
-Now you can cycle through all color schemes using F12 for example,
-without closing running console applications.
-
+Now you can cycle through all color schemes using Alt+F11/12 for example, without closing running console applications.
