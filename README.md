@@ -2,7 +2,7 @@
 
 This is a small tool for changing your terminal colors on the fly. This fork supports reading Xcolor style files. 
 
-Most work accomplished by (sos4nt)[https://github.com/sos4nt/dynamic-colors] who did the original version which had a custom theme format.
+Most work accomplished by [sos4nt](https://github.com/sos4nt/dynamic-colors) who did the original version which had a custom theme format.
 
 ## Pre-requisites
 
