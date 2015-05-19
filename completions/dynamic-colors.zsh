@@ -10,10 +10,10 @@ _dynamic_colors() {
   word=${words[2]}
 
   if [ "${#words}" -eq 2 ]; then
-    reply=(help edit init list switch audit create)
+    reply=(help init list switch next previous)
   else
     case "$word" in
-      switch|edit|audit)
+      switch)
         themes="$(dynamic-colors list)"
         reply=("${(ps:\n:)themes}")
         ;;
