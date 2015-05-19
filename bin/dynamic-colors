@@ -131,6 +131,7 @@ load_colorscheme () {
 }
 
 switch () {
+  echo "told to move to $1"
   write_colorscheme_name "$1"
   load_colorscheme "$1"
   # set_colors
@@ -157,26 +158,34 @@ switch () {
 # }
 
 cycle() {
-    if [ -f "$DYNAMIC_COLORS_THEMES" ]; then
-        current=`head -1 "$DYNAMIC_COLORS_THEMES"`
-        found=false
-        cd "$DYNAMIC_COLORS_THEMES"
-        for file in *; do
-            if [ $found = true ]; then
-                switch "${file%}"
-                return
-            fi
-            if [ $file = "${current}" ]; then
-                found=true
-            fi
-        done
-    fi
+  current=`head -1 "${DYNAMIC_COLORS_ROOT}/colorscheme"`
+  found=false
+  count=0
+  allthemes=$(find $DYNAMIC_COLORS_THEMES -type f -printf '%f\n' | sort)
+  allthemeslength=`echo "$allthemes" | wc -l`
+  allthemeslength=$((allthemeslength - 1))
+  firsttheme=`printf $allthemes | head -n 1`
+  cd "$DYNAMIC_COLORS_THEMES"
 
-    cd "$DYNAMIC_COLORS_THEMES"
-    for file in *; do
-        switch "${file%}"
-        break
-    done
+  for file in $allthemes; do
+    # echo "Currently using $current"
+    # echo "Iterating over $file / $count / $allthemeslength"
+    if [ $found = true ]; then
+      switch "$file"
+      return
+    fi
+    if [ $file = "${current}" ]; then
+      found=true
+      # echo "^ found match"
+      if [ $count == $allthemeslength ];then
+        # switch to first one
+        # echo "First theme $firsttheme"
+        switch "$firsttheme"
+        return
+      fi
+    fi
+    count=$((count + 1))
+  done
 }
 
 cycledown() {
