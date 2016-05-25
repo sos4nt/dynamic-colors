@@ -16,7 +16,7 @@ Basic commands:
 
 Creating colorschemes:
   a,audit <colorscheme>   check <colorscheme> for undefined colors
-  c,create <colorscheme>  create a new colorscheme from scratch
+  C,create <colorscheme>  create a new colorscheme from scratch
 "
 
 die () {
@@ -204,7 +204,7 @@ case "$#" in
     help ;;
   a|audit)
     audit "$1" ;;
-  c|create)
+  C|create)
     [ $# -ne 1 ] && usage
     create "$1" ;;
   e|edit)
