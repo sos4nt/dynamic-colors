@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
-USAGE="Usage: dynamic-colors [help|cycle|init|list|switch <colorscheme>]"
+USAGE="Usage: dynamic-colors [-o <path>] [help|cycle|init|list|switch <colorscheme>]"
 HELP="\
 dynamic-colors <command>
+
+Option:
+  -o <path>               override root directory
 
 Basic commands:
   h,help                  print this help message
