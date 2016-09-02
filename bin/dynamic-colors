@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 USAGE="Usage: dynamic-colors [help|next|previous|list|switch <colorscheme>]"
@@ -95,7 +95,7 @@ load_colorscheme () {
   [ ! -f "$DYNAMIC_COLORS_THEMES/$1" ] && die "error: unknown colorscheme '$1'"
 
   colorschemeFile=`cat "$DYNAMIC_COLORS_THEMES/$1"`
-  hexRegex="(\#\S{3,6})"
+  hexRegex="((\[[1-9]{1,2}\])*\#\S{3,6})"
   groupRegex="(\w*)\:"
 
   printf %s "$colorschemeFile" | while IFS= read -r line
