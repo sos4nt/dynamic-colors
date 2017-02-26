@@ -74,17 +74,32 @@ Check if all colors are defined:
 ## Key binding example for urxvt
 Save this to a file named "urxvt-colors":
 
-    sub on_user_command {
-        my ($self, $cmd) = @_;
-        my $output = `dynamic-colors cycle`;
-        $self->cmd_parse($output);
-    }
+	#! perl -w
+
+	sub cycle {
+		my ($self) = @_;
+
+		my $output = `dynamic-colors cycle`;
+		$self->cmd_parse($output);
+
+		()
+	}
+
+	sub on_user_command {
+		my ($self, $cmd) = @_;
+
+		if ($cmd eq "urxvt-colors:cycle") {
+			$self->cycle;
+		}
+
+		()
+	}
 
 Add this to ~/.Xdefaults:
 
     urxvt*perl-ext-common: urxvt-colors
     urxvt*perl-lib: [directoy of urxvt-colors]
-    urxvt*keysym.F12: perl:urxvt-colors:
+    urxvt*keysym.F12: perl:urxvt-colors:cycle
 
 Now you can cycle through all color schemes using F12 for example,
 without closing running console applications.
