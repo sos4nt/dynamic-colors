@@ -70,7 +70,7 @@ colors=( background foreground cursor mouse_background mouse_foreground highligh
 color_names=( black red green yellow blue magenta cyan white brblack brred brgreen bryellow brblue brmagenta brcyan brwhite )
 
 if [ -z "${DYNAMIC_COLORS_ROOT}" ]; then
-  DYNAMIC_COLORS_ROOT="${HOME}/.dynamic-colors"
+  DYNAMIC_COLORS_ROOT="$(cd $(dirname $0)/..;pwd)" # previously "${HOME}/.dynamic-colors"
 else
   DYNAMIC_COLORS_ROOT="${DYNAMIC_COLORS_ROOT%/}"
 fi
