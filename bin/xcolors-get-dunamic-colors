@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# copied from dynamic-colors
+if [ -z "${DYNAMIC_COLORS_ROOT}" ]; then
+  DYNAMIC_COLORS_ROOT="$(cd $(dirname $0)/..;pwd)" 
+else
+  DYNAMIC_COLORS_ROOT="${DYNAMIC_COLORS_ROOT%/}"
+fi
+COLORSCHEMES="${DYNAMIC_COLORS_ROOT}/colorschemes"
+
+[ ! -d $COLORSCHEMES ] && echo "cannot find $COLORSCHEMES, consider seetting DYNAMIC_COLORS_ROOT" >&2 && exit 1
+
+tmp=$(mktemp /tmp/dynamic-colors_XXX)
+url=www.xcolors.net/dl/$1 
+
+curl $url > $tmp
+grep html $tmp  && echo "bad url: $url" >&2 && exit 1
+
+sed 's/!/# /; 
+     s/^URxvt//;s/^*//;s/^\.//; 
+     /rgb:/ s:/::g; s/rgb:/#/; 
+     s/\s*:\s*\(#[A-Za-z0-9]\+\)/="\1"/' $tmp > $COLORSCHEMES/$1.sh
+rm $tmp
+
+echo "# from $url" >> $COLORSCHEMES/$1.sh
