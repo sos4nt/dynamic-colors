@@ -71,7 +71,20 @@ Check if all colors are defined:
 
     dynamic-colors audit my-color-scheme
 
-## Key binding example for urxvt
+## Key binding 
+### example for bash
+```
+ bind -x '"\el":"dynamic-colors cycle"'
+```
+### example for zsh
+```
+dyncolor() dynamic-colors cycle
+zle -N dyncolor
+bindkey '\el' dyncolor
+
+```
+
+### example for urxvt
 Save this to a file named "urxvt-colors":
 
     sub on_user_command {
