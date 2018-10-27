@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+set -eo pipefail
+
+[ $# -le 0 ] && echo "need a colorscheme name from www.xcolors.net" && exit 1
 
 # copied from dynamic-colors
 if [ -z "${DYNAMIC_COLORS_ROOT}" ]; then

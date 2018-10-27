@@ -35,8 +35,17 @@ This changes your terminal background color to red if your terminal supports OCS
 
         source $HOME/.dynamic-colors/completions/dynamic-colors.zsh
 
+4. To change with a keybinding, in `.bashrc` add
+
+        bind -x '"\el":"dynamic-colors fzf"'         # Alt + l = pick theme with fzf
+        bind -x '"\e\C-l":"dynamic-colors cycle"'    # Ctrl+Alt+L = cycle
+
+5. Get schemes from www.xcolors.net using `bin/xcolors-get-dunamic-colors` **DEFUNCT as of 20181027** :(, see https://github.com/tlatsas/xcolors
 
 ## Usage
+
+Pick a scheme with `fzf`:
+    dynamic-colors fzf
 
 List available color schemes:
 

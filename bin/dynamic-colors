@@ -13,6 +13,7 @@ Basic commands:
   i,init                  (re)load last color scheme
   l,list                  list available colorschemes
   s,switch <colorscheme>  change terminal colors to <colorscheme>
+  f,fzf                   pick with fzf
 
 Creating colorschemes:
   a,audit <colorscheme>   check <colorscheme> for undefined colors
@@ -218,6 +219,8 @@ case "$#" in
     switch "$1" ;;
   c|cycle)
     cycle ;;
+  f|fzf)
+    $0 l | fzf | xargs -r $0 s ;;
   *)
     usage ;;
   esac
