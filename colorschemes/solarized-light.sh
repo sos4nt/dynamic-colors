@@ -23,7 +23,8 @@ magenta="#d33682"  # magenta   #d33682  5/5 magenta   50  65 -05
   green="#859900"  # green     #859900  2/2 green     60 -20  65
 
 background="$base3"
-foreground="$base00"
+#foreground="$base00"
+foreground="black"
 cursor="$base01"
 mouse_background="$base2"
 mouse_foreground="$base01"
