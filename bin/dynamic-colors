@@ -104,8 +104,10 @@ set_colors () {
 }
 
 load_colorscheme () {
-  [ ! -f "$COLORSCHEMES/$1.sh" ] && die "error: unknown colorscheme '$1'"
-  . "$COLORSCHEMES/$1.sh" # source colorscheme file
+  [ ! -f "$COLORSCHEMES/$1" ] && die "error: unknown colorscheme '$1'"
+  while IFS=: read -r prop value; do
+          [[ -n "$value" ]] && printf -v "$prop" "$value"
+  done < <(cat "$COLORSCHEMES/$1" | tr -d '[:blank:]' | sed -n 's/^\*\.*//p')
 }
 
 switch () {
@@ -138,20 +140,20 @@ cycle() {
         current=`head -1 "${DYNAMIC_COLORS_ROOT}/colorscheme"`
         found=false
         cd "$COLORSCHEMES"
-        for file in *.sh; do
+        for file in *; do
             if [ $found = true ]; then
-                switch "${file%.sh}"
+                switch "${file}"
                 return
             fi
-            if [ $file = "${current}.sh" ]; then
+            if [ $file = "${current}" ]; then
                 found=true
             fi
         done
     fi
 
     cd "$COLORSCHEMES"
-    for file in *.sh; do
-        switch "${file%.sh}"
+    for file in *; do
+        switch "${file}"
         break
     done
 }
@@ -159,8 +161,8 @@ cycle() {
 list () {
   [ ! -d "$COLORSCHEMES" ] && die "error: colorschemes directory '$COLORSCHEMES' doesn't exist"
   cd "$COLORSCHEMES"
-  for file in *.sh; do
-    echo "${file%.sh}"
+  for file in *; do
+    echo "${file}"
   done
 }
 
@@ -169,19 +171,19 @@ edit () {
   if [ ${#@} -eq 0 ]; then
     ${EDITOR:-/usr/bin/vim} .
   else
-    ${EDITOR:-/usr/bin/vim} "${@/%/.sh}"
+    ${EDITOR:-/usr/bin/vim} "${@}"
   fi
 }
 
 create () {
-  [ -f "$COLORSCHEMES/$1.sh" ] && die "error: colorscheme '$1' already exists"
+  [ -f "$COLORSCHEMES/$1" ] && die "error: colorscheme '$1' already exists"
   output="# $1\n"
   for color in ${colors[@]}; do
     output+="\n$color=\"\""
     [[ $color == color* ]] && output+=" # ${color_names[${color#color}]}"
   done
   cd "$COLORSCHEMES"
-  echo -e "$output" >> "$1.sh"
+  echo -e "$output" >> "$1"
   edit "$1"
 }
 
