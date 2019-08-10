@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 USAGE="Usage: dynamic-colors [help|cycle|init|list|switch <colorscheme>]"
