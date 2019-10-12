@@ -10,7 +10,7 @@ _dynamic_colors() {
   word=${words[2]}
 
   if [ "${#words}" -eq 2 ]; then
-    reply=(help edit init list switch audit create)
+    reply=(help edit init list switch audit create cycle)
   else
     case "$word" in
       switch|edit|audit)

@@ -3,7 +3,7 @@ _dynamic_colors() {
   COMPREPLY=()
   cur="${COMP_WORDS[COMP_CWORD]}"
   prev="${COMP_WORDS[COMP_CWORD-1]}"
-  opts="help edit init list switch audit create"
+  opts="help edit init list switch audit create cycle"
 
   case "${prev}" in
       switch|edit|audit)
