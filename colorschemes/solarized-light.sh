@@ -11,9 +11,9 @@
  base00="#657b83"  # base00    #657b83 11/7 bryellow  50 -07 -07
   base0="#839496"  # base0     #839496 12/6 brblue    60 -06 -03
   base1="#93a1a1"  # base1     #93a1a1 14/4 brcyan    65 -05 -02
-  base2="#eee8d5"  # base2     #eee8d5  7/7 white     92 -00  10
-  base3="#95a1a1"  # base4     #95a1a1 15/8 lightgray 65.28 -4.41 -1.54
-  base4="#fdf6e3"  # base3     #fdf6e3 15/7 brwhite   97  00  10
+  base2="#eee8d5"  # base2     #eee8d5  7/7 warmwhite 92 -00  10
+  base3="#95a1a1"  # base3     #95a1a1 15/8 lightgray 65.28 -4.41 -1.54
+  base4="#fdf6e3"  # base4     #fdf6e3 15/7 brwhite   97  00  10
  yellow="#b58900"  # yellow    #b58900  3/3 yellow    60  10  65
  orange="#cb4b16"  # orange    #cb4b16  9/3 brred     50  50  55
     red="#dc322f"  # red       #dc322f  1/1 red       50  65  45
