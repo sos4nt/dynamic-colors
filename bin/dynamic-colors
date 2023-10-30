@@ -1,19 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
-USAGE="Usage: dynamic-colors [help|cycle|init|list|switch <colorscheme>]"
+USAGE="Usage: dynamic-colors [help|fzf|ff|fr|cycle|init|list|switch <colorscheme>]"
 HELP="\
 dynamic-colors <command>
 
 Basic commands:
   h,help                  print this help message
-  c,cycle                 cycle through color schemes
+  n,cycle                 cycle through color schemes
   e,edit [<colorscheme>]  edit <colorscheme> when given or launch editor
                           in colorschemes directory otherwise
   i,init                  (re)load last color scheme
   l,list                  list available colorschemes
   s,switch <colorscheme>  change terminal colors to <colorscheme>
   f,fzf                   pick with fzf
+  ff,fuzzyflavour         use flavour base16 color themes (flavour update)
+  fr,flavourrandom        random flavour base16 theme
+  b,base16,flavor <theme> set flavor theme        
 
 Creating colorschemes:
   a,audit <colorscheme>   check <colorscheme> for undefined colors
@@ -177,13 +180,32 @@ edit () {
 create () {
   [ -f "$COLORSCHEMES/$1.sh" ] && die "error: colorscheme '$1' already exists"
   output="# $1\n"
-  for color in ${colors[@]}; do
+  for color in "${colors[@]}"; do
     output+="\n$color=\"\""
     [[ $color == color* ]] && output+=" # ${color_names[${color#color}]}"
   done
   cd "$COLORSCHEMES"
   echo -e "$output" >> "$1.sh"
   edit "$1"
+}
+
+from_flavours(){
+   # theme=$(flavours list|tr ' ' '\n'|shuf |sed 1q)
+   # themefile=$(flavours info "$theme"|sed 's/.*@//;1q')
+   themefile=$(flavours info "${1:?flavours base16 theme}"|sed 's/.*@ //;1q')
+   [ -z "$themefile" -o ! -r "$themefile" ] && die "error with flavours base16 theme '$1' ('$themefile')"
+   echo "$themefile" >&2
+   mapfile -t colorvals < <(perl -lne '$_=lc; print $1 if /base.*: "([a-z0-9]{6})"/;' "$themefile")
+   # NB. i=16 (17th) color set to empty and never used
+   for i in $(seq 0 ${#colorvals[@]}); do
+      c=${colorvals[$i]}
+      printf -v "color$i" "#%s" "$c"
+   done
+   background="$color1"
+   foreground="$color6"
+   mouse_background="$color2"
+   mouse_foreground="$color1"
+   set_colors
 }
 
 usage () {
@@ -217,10 +239,16 @@ case "$#" in
   s|switch)
     [ $# -ne 1 ] && usage
     switch "$1" ;;
-  c|cycle)
+  n|cycle)
     cycle ;;
+  b|base16|flavours)
+     from_flavours "${1:?flavours base16theme}";;
+  ff|fuzzyflavours)
+     flavours list|tr ' ' '\n'|fzf | xargs -r "$0" b ;;
+  fr|flavorsrandom)
+     flavours list|tr ' ' '\n'|shuf|sed 1q | xargs -r "$0" b ;;
   f|fzf)
-    $0 l | fzf | xargs -r $0 s ;;
+    $0 l | fzf | xargs -r "$0" s ;;
   *)
     usage ;;
   esac
