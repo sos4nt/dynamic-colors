@@ -17,6 +17,7 @@ Basic commands:
   ff,fuzzyflavour         use flavour base16 color themes (flavour update)
   fr,flavourrandom        random flavour base16 theme
   b,base16,flavor <theme> set flavor theme        
+  show,showls             show dircolors
 
 Creating colorschemes:
   a,audit <colorscheme>   check <colorscheme> for undefined colors
@@ -250,6 +251,13 @@ case "$#" in
      flavours list|tr ' ' '\n'|shuf|sed 1q | xargs -r "$0" b ;;
   f|fzf)
     $0 l | fzf | xargs -r "$0" s ;;
+  show|showls)
+     dircolors --print-database|
+        grep -Po '^[A-Z]+ [0-9;]+'|
+        while IFS=" " read -r x c; do
+           echo -e "\e[${c}m $x \e[0m"
+        done
+     exit 0;;
   *)
     usage ;;
   esac
