@@ -246,7 +246,11 @@ case "$#" in
   b|base16|flavours)
      from_flavours "${1:?flavours base16theme}";;
   ff|fuzzyflavours)
-     flavours list|tr ' ' '\n'|fzf | xargs -r "$0" b ;;
+     flavours list|
+        tr ' ' '\n'|
+        fzf --preview="$0 showls"  \
+            --bind  "ctrl-a:execute($0 b {})" |
+        xargs -r "$0" b ;;
   fr|flavorsrandom)
      flavours list|tr ' ' '\n'|shuf|sed 1q | xargs -r "$0" b ;;
   f|fzf)
