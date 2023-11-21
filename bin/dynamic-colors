@@ -205,6 +205,7 @@ from_flavours(){
    foreground="$color6"
    mouse_background="$color2"
    mouse_foreground="$color1"
+   highlight="$color2"
    set_colors
 }
 
