@@ -261,6 +261,19 @@ case "$#" in
         while IFS=" " read -r x c; do
            echo -e "\e[${c}m $x \e[0m"
         done
+     # from htop source
+     #[CPU_NICE_TEXT] = A_BOLD | ColorPair(Blue, Black),
+     #[CPU_NORMAL] = ColorPair(Green, Black),
+     #[CPU_SYSTEM] = ColorPair(Red, Black),
+     #[CPU_IOWAIT] = A_BOLD | ColorPairGrayBlack,
+     #[CPU_IRQ] = ColorPair(Yellow, Black),
+     #[CPU_SOFTIRQ] = ColorPair(Magenta, Black),
+     #[CPU_STEAL] = ColorPair(Cyan, Black),
+     #[CPU_GUEST] = ColorPair(Cyan, Black),
+     # ascii colors
+     # fg: black 30, red 31, green 32, yellow 33, blue 34, magenta 35, cyan 36, white 37; gray 90
+     # bg: +10
+     printf "\e[34mlow/\e[32mnormal/\e[31mkernal/\e[33mirq/\e[35msoft-irq/\e[36msteal/\e[90;1mio-wait\n"
      exit 0;;
   *)
     usage ;;
