@@ -199,14 +199,20 @@ from_flavours(){
    mapfile -t colorvals < <(perl -lne '$_=lc; print $1 if /base.*: "([a-z0-9]{6})"/;' "$themefile")
    # NB. i=16 (17th) color set to empty and never used
    for i in $(seq 0 ${#colorvals[@]}); do
-      c=${colorvals[$i]}
+      # first 8 color are background/mouse?
+      # last 8 are vibrant
+      [ $i -lt 8 ] && ir=$((i + 8)) || ir=$i
+      c=${colorvals[$ir]}
       printf -v "color$i" "#%s" "$c"
+      printf "color$i#%s\n" "$c" >&2 #debug
    done
-   background="$color1"
-   foreground="$color6"
-   mouse_background="$color2"
-   mouse_foreground="$color1"
-   highlight="$color2"
+
+   background="#${colorvals[0]}" #"$color1"
+   foreground="#${colorvals[6]}" #"$color6"
+   mouse_background="#${colorvals[2]}" #"$color2"
+   mouse_foreground="#${colorvals[1]}" #"$color1"
+   highlight="#${colorvals[3]}" #"$color2"
+
    set_colors
 }
 
