@@ -204,7 +204,7 @@ from_flavours(){
       [ $i -lt 8 ] && ir=$((i + 8)) || ir=$i
       c=${colorvals[$ir]}
       printf -v "color$i" "#%s" "$c"
-      printf "color$i#%s\n" "$c" >&2 #debug
+      #printf "color$i#%s\n" "$c" >&2 #debug
    done
 
    background="#${colorvals[0]}" #"$color1"
@@ -279,7 +279,9 @@ case "$#" in
      # ascii colors
      # fg: black 30, red 31, green 32, yellow 33, blue 34, magenta 35, cyan 36, white 37; gray 90
      # bg: +10
-     printf "\e[34mlow/\e[32mnormal/\e[31mkernal/\e[33mirq/\e[35msoft-irq/\e[36msteal/\e[90;1mio-wait\n"
+     printf "htop: \e[34mlow/\e[32mnormal/\e[31mkernal/\e[33mirq/\e[35msoft-irq/\e[36msteal/\e[90;1mio-wait\e[0m\n"
+     printf "\e[30mblack\e[31mred  \e[32mgreen  \e[33myellow  \e[34mblue  \e[35mmagenta  \e[36mcyan  \e[37mwhite\e[0m\n"
+     printf "\e[100mgray \e[101mbred \e[102mbgreen \e[103mbyellow \e[104mbblue \e[105mbmagenta \e[106mbcyan \e[107mbwhite\e[0m\n"
      exit 0;;
   *)
     usage ;;
