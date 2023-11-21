@@ -249,7 +249,7 @@ case "$#" in
      flavours list|
         tr ' ' '\n'|
         fzf --preview="$0 showls"  \
-            --bind  "ctrl-a:execute($0 b {})" |
+            --bind  "ctrl-a:execute($0 b {} >&2)" |
         xargs -r "$0" b ;;
   fr|flavorsrandom)
      flavours list|tr ' ' '\n'|shuf|sed 1q | xargs -r "$0" b ;;
