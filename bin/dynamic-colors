@@ -16,7 +16,7 @@ Basic commands:
   f,fzf                   pick with fzf
   ff,fuzzyflavour         use flavour base16 color themes (flavour update)
   fr,flavourrandom        random flavour base16 theme
-  b,base16,flavor <theme> set flavor theme        
+  b,base16,flavour <theme> set flavour theme
   show,showls             show dircolors
 
 Creating colorschemes:
@@ -230,11 +230,11 @@ from_flavours(){
       #printf "color$i#%s\n" "$c" >&2 #debug
    done
 
-   background="#${colorvals[0]}" #"$color1"
-   foreground="#${colorvals[6]}" #"$color6"
-   mouse_background="#${colorvals[2]}" #"$color2"
-   mouse_foreground="#${colorvals[1]}" #"$color1"
-   highlight="#${colorvals[3]}" #"$color2"
+   background="#${colorvals[0]}"
+   foreground="#${colorvals[6]}"
+   mouse_background="#${colorvals[2]}"
+   mouse_foreground="#${colorvals[1]}"
+   highlight="#${colorvals[3]}"
 
    set_colors
 }
@@ -267,23 +267,43 @@ case "$#" in
     init ;;
   l|list)
     list ;;
-  s|switch)
+  listall) 
+     $0 list | sed s/^/xcolors:/;
+     flavours list |tr ' ' '\n' | sed '/^$/d;s/^/flavours:/'
+     ;;
+  switchall) 
+     if [[ $1 =~ (xcolors|flavours):(.*) ]]; then
+        $0 "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+     else
+        echo "ERROR: unknown theme for switchall. '$1' Must start with xcolors or flavours" >&2
+        exit 1
+     fi
+     ;;
+  s|switch|xcolors)
     [ $# -ne 1 ] && usage
     switch "$1" ;;
   n|cycle)
     cycle ;;
   b|base16|flavours)
      from_flavours "${1:?flavours base16theme}";;
+  fuzzyall)
+     $0 listall|
+        fzf --preview="$0 showls"  \
+            --bind  "ctrl-j:execute($0 switchall {} >&2)" |
+        xargs -r "$0" switchall ;;
   ff|fuzzyflavours)
      flavours list|
         tr ' ' '\n'|
         fzf --preview="$0 showls"  \
-            --bind  "ctrl-a:execute($0 b {} >&2)" |
+            --bind  "ctrl-j:execute($0 b {} >&2)" |
         xargs -r "$0" b ;;
-  fr|flavorsrandom)
+  fr|flavoursrandom)
      flavours list|tr ' ' '\n'|shuf|sed 1q | xargs -r "$0" b ;;
   f|fzf)
-    $0 l | fzf | xargs -r "$0" s ;;
+    $0 l | 
+     fzf --preview="$0 showls"  \
+         --bind  "ctrl-j:execute($0 switch {} >&2)" |
+     xargs -r "$0" s ;;
   show|showls)
      # ascii colors
      # fg: black 30, red 31, green 32, yellow 33, blue 34, magenta 35, cyan 36, white 37; gray 90
