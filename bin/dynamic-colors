@@ -197,13 +197,36 @@ from_flavours(){
    [ -z "$themefile" -o ! -r "$themefile" ] && die "error with flavours base16 theme '$1' ('$themefile')"
    echo "$themefile" >&2
    mapfile -t colorvals < <(perl -lne '$_=lc; print $1 if /base.*: "([a-z0-9]{6})"/;' "$themefile")
+   #perl -lne 'print ++$i-1," ", $1 if m/# (.*)/' /home/foranw/.local/share/flavours/base16/schemes/windows/windows-nt.yaml
+   #0 black               0  Black
+   #1 darkish black       1  Red
+   #2 brightish black     2  Green
+   #3 bright black        3  Yellow
+   #4 darker white        4  Blue
+   #5 white               5  Magenta
+   #6 middle white        6  Cyan
+   #7 bright white        7  White
+   #8 bright red          8  Bright Black (Gray)
+   #9 yellow              9  Bright Red
+   #10 bright yellow      10 Bright Green
+   #11 bright green       11 Bright Yellow
+   #12 bright cyan        12 Bright Blue
+   #13 bright blue        13 Bright Magenta
+   #14 bright magenta     14 Bright Cyan
+   #15 green              15 Bright White
+   #[basei colorvalue] => colorXX
+   # color0-8 are main colors are base8-15
+   base2col=([0]=0 [1]=8  [2]=13  [3]=9 [4]=12  [5]=7  [6]=14 [7]=15
+             [8]=1 [9]=11 [10]=3 [11]=2 [12]=6 [13]=4 [14]=5 [15]=10)
+
    # NB. i=16 (17th) color set to empty and never used
    for i in $(seq 0 ${#colorvals[@]}); do
       # first 8 color are background/mouse?
       # last 8 are vibrant
-      [ $i -lt 8 ] && ir=$((i + 8)) || ir=$i
-      c=${colorvals[$ir]}
-      printf -v "color$i" "#%s" "$c"
+      #[ $i -lt 8 ] && ir=$((i + 8)) || ir=$i
+      colori=${base2col[$i]}
+      c=${colorvals[$i]}
+      printf -v "color$colori" "#%s" "$c"
       #printf "color$i#%s\n" "$c" >&2 #debug
    done
 
@@ -262,26 +285,17 @@ case "$#" in
   f|fzf)
     $0 l | fzf | xargs -r "$0" s ;;
   show|showls)
-     dircolors --print-database|
-        grep -Po '^[A-Z]+ [0-9;]+'|
-        while IFS=" " read -r x c; do
-           echo -e "\e[${c}m $x \e[0m"
-        done
-     # from htop source
-     #[CPU_NICE_TEXT] = A_BOLD | ColorPair(Blue, Black),
-     #[CPU_NORMAL] = ColorPair(Green, Black),
-     #[CPU_SYSTEM] = ColorPair(Red, Black),
-     #[CPU_IOWAIT] = A_BOLD | ColorPairGrayBlack,
-     #[CPU_IRQ] = ColorPair(Yellow, Black),
-     #[CPU_SOFTIRQ] = ColorPair(Magenta, Black),
-     #[CPU_STEAL] = ColorPair(Cyan, Black),
-     #[CPU_GUEST] = ColorPair(Cyan, Black),
      # ascii colors
      # fg: black 30, red 31, green 32, yellow 33, blue 34, magenta 35, cyan 36, white 37; gray 90
      # bg: +10
-     printf "htop: \e[34mlow/\e[32mnormal/\e[31mkernal/\e[33mirq/\e[35msoft-irq/\e[36msteal/\e[90;1mio-wait\e[0m\n"
      printf "\e[30mblack\e[31mred  \e[32mgreen  \e[33myellow  \e[34mblue  \e[35mmagenta  \e[36mcyan  \e[37mwhite\e[0m\n"
      printf "\e[100mgray \e[101mbred \e[102mbgreen \e[103mbyellow \e[104mbblue \e[105mbmagenta \e[106mbcyan \e[107mbwhite\e[0m\n"
+     echo
+     printf "htop: \e[34mlow/\e[32mnormal/\e[31mkernal/\e[33mirq/\e[35msoft-irq/\e[36msteal/\e[90;1mio-wait\e[0m\n"
+     echo
+     dircolors --print-database|
+        perl -ne 'print("\e[${2}m$1\e[0m", ((++$i)%4==0)?"\n":" ") if m/^([A-Z]+) ([0-9;]+)/'|
+        column -t
      exit 0;;
   *)
     usage ;;
