@@ -1,18 +1,23 @@
 #!/usr/bin/env bash
 set -e
 
-USAGE="Usage: dynamic-colors [help|cycle|init|list|switch <colorscheme>]"
+USAGE="Usage: dynamic-colors [help|fzf|ff|fr|cycle|init|list|switch <colorscheme>]"
 HELP="\
 dynamic-colors <command>
 
 Basic commands:
   h,help                  print this help message
-  c,cycle                 cycle through color schemes
+  n,cycle                 cycle through color schemes
   e,edit [<colorscheme>]  edit <colorscheme> when given or launch editor
                           in colorschemes directory otherwise
   i,init                  (re)load last color scheme
   l,list                  list available colorschemes
   s,switch <colorscheme>  change terminal colors to <colorscheme>
+  f,fzf                   pick with fzf
+  ff,fuzzyflavour         use flavour base16 color themes (flavour update)
+  fr,flavourrandom        random flavour base16 theme
+  b,base16,flavour <theme> set flavour theme
+  show,showls             show dircolors
 
 Creating colorschemes:
   a,audit <colorscheme>   check <colorscheme> for undefined colors
@@ -70,7 +75,7 @@ colors=( background foreground cursor mouse_background mouse_foreground highligh
 color_names=( black red green yellow blue magenta cyan white brblack brred brgreen bryellow brblue brmagenta brcyan brwhite )
 
 if [ -z "${DYNAMIC_COLORS_ROOT}" ]; then
-  DYNAMIC_COLORS_ROOT="${HOME}/.dynamic-colors"
+  DYNAMIC_COLORS_ROOT="$(cd $(dirname $0)/..;pwd)" # previously "${HOME}/.dynamic-colors"
 else
   DYNAMIC_COLORS_ROOT="${DYNAMIC_COLORS_ROOT%/}"
 fi
@@ -176,13 +181,62 @@ edit () {
 create () {
   [ -f "$COLORSCHEMES/$1.sh" ] && die "error: colorscheme '$1' already exists"
   output="# $1\n"
-  for color in ${colors[@]}; do
+  for color in "${colors[@]}"; do
     output+="\n$color=\"\""
     [[ $color == color* ]] && output+=" # ${color_names[${color#color}]}"
   done
   cd "$COLORSCHEMES"
   echo -e "$output" >> "$1.sh"
   edit "$1"
+}
+
+from_flavours(){
+   # theme=$(flavours list|tr ' ' '\n'|shuf |sed 1q)
+   # themefile=$(flavours info "$theme"|sed 's/.*@//;1q')
+   themefile=$(flavours info "${1:?flavours base16 theme}"|sed 's/.*@ //;1q')
+   [ -z "$themefile" -o ! -r "$themefile" ] && die "error with flavours base16 theme '$1' ('$themefile')"
+   echo "$themefile" >&2
+   mapfile -t colorvals < <(perl -lne '$_=lc; print $1 if /base.*: "([a-z0-9]{6})"/;' "$themefile")
+   #perl -lne 'print ++$i-1," ", $1 if m/# (.*)/' /home/foranw/.local/share/flavours/base16/schemes/windows/windows-nt.yaml
+   #0 black               0  Black
+   #1 darkish black       1  Red
+   #2 brightish black     2  Green
+   #3 bright black        3  Yellow
+   #4 darker white        4  Blue
+   #5 white               5  Magenta
+   #6 middle white        6  Cyan
+   #7 bright white        7  White
+   #8 bright red          8  Bright Black (Gray)
+   #9 yellow              9  Bright Red
+   #10 bright yellow      10 Bright Green
+   #11 bright green       11 Bright Yellow
+   #12 bright cyan        12 Bright Blue
+   #13 bright blue        13 Bright Magenta
+   #14 bright magenta     14 Bright Cyan
+   #15 green              15 Bright White
+   #[basei colorvalue] => colorXX
+   # color0-8 are main colors are base8-15
+   base2col=([0]=0 [1]=8  [2]=13  [3]=9 [4]=12  [5]=7  [6]=14 [7]=15
+             [8]=1 [9]=11 [10]=3 [11]=2 [12]=6 [13]=4 [14]=5 [15]=10)
+
+   # NB. i=16 (17th) color set to empty and never used
+   for i in $(seq 0 ${#colorvals[@]}); do
+      # first 8 color are background/mouse?
+      # last 8 are vibrant
+      #[ $i -lt 8 ] && ir=$((i + 8)) || ir=$i
+      colori=${base2col[$i]}
+      c=${colorvals[$i]}
+      printf -v "color$colori" "#%s" "$c"
+      #printf "color$i#%s\n" "$c" >&2 #debug
+   done
+
+   background="#${colorvals[0]}"
+   foreground="#${colorvals[6]}"
+   mouse_background="#${colorvals[2]}"
+   mouse_foreground="#${colorvals[1]}"
+   highlight="#${colorvals[3]}"
+
+   set_colors
 }
 
 usage () {
@@ -213,11 +267,56 @@ case "$#" in
     init ;;
   l|list)
     list ;;
-  s|switch)
+  listall) 
+     $0 list | sed s/^/xcolors:/;
+     flavours list |tr ' ' '\n' | sed '/^$/d;s/^/flavours:/'
+     ;;
+  switchall) 
+     if [[ $1 =~ (xcolors|flavours):(.*) ]]; then
+        $0 "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+     else
+        echo "ERROR: unknown theme for switchall. '$1' Must start with xcolors or flavours" >&2
+        exit 1
+     fi
+     ;;
+  s|switch|xcolors)
     [ $# -ne 1 ] && usage
     switch "$1" ;;
-  c|cycle)
+  n|cycle)
     cycle ;;
+  b|base16|flavours)
+     from_flavours "${1:?flavours base16theme}";;
+  fuzzyall)
+     $0 listall|
+        fzf --preview="$0 showls"  \
+            --bind  "ctrl-j:execute($0 switchall {} >&2)" |
+        xargs -r "$0" switchall ;;
+  ff|fuzzyflavours)
+     flavours list|
+        tr ' ' '\n'|
+        fzf --preview="$0 showls"  \
+            --bind  "ctrl-j:execute($0 b {} >&2)" |
+        xargs -r "$0" b ;;
+  fr|flavoursrandom)
+     flavours list|tr ' ' '\n'|shuf|sed 1q | xargs -r "$0" b ;;
+  f|fzf)
+    $0 l | 
+     fzf --preview="$0 showls"  \
+         --bind  "ctrl-j:execute($0 switch {} >&2)" |
+     xargs -r "$0" s ;;
+  show|showls)
+     # ascii colors
+     # fg: black 30, red 31, green 32, yellow 33, blue 34, magenta 35, cyan 36, white 37; gray 90
+     # bg: +10
+     printf "\e[30mblack\e[31mred  \e[32mgreen  \e[33myellow  \e[34mblue  \e[35mmagenta  \e[36mcyan  \e[37mwhite\e[0m\n"
+     printf "\e[100mgray \e[101mbred \e[102mbgreen \e[103mbyellow \e[104mbblue \e[105mbmagenta \e[106mbcyan \e[107mbwhite\e[0m\n"
+     echo
+     printf "htop: \e[34mlow/\e[32mnormal/\e[31mkernal/\e[33mirq/\e[35msoft-irq/\e[36msteal/\e[90;1mio-wait\e[0m\n"
+     echo
+     dircolors --print-database|
+        perl -ne 'print("\e[${2}m$1\e[0m", ((++$i)%4==0)?"\n":" ") if m/^([A-Z]+) ([0-9;]+)/'|
+        column -t
+     exit 0;;
   *)
     usage ;;
   esac
