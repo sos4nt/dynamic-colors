@@ -49,7 +49,10 @@ send_escape_sequence () {
   escape_sequence="$1"
 
   # wrap escape sequence when within a TMUX session
-  [ ! -z "$TMUX" ] && escape_sequence="${DSC}tmux;${ESC}${escape_sequence}${ESC}\\"
+  tmux_allow_passthrough=`tmux show-options -gw 2>/dev/null | awk '$1 == "allow-passthrough" { print $2}'`
+  if [ $tmux_allow_passthrough == on ]; then
+    escape_sequence="${DSC}tmux;${ESC}${escape_sequence}${ESC}\\"
+  fi
 
   printf "${escape_sequence}"
 }
